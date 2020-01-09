@@ -1,7 +1,7 @@
 #!/bin/sh
 
 REQUIREDVERSION="19.03.4"
-DOCKERVERSION=$(docker version --format '{{.Client.Version}}')
+DOCKERVERSION=$(sudo docker version --format '{{.Client.Version}}')
 
 echo "Docker Client version is $DOCKERVERSION"
 echo "Required version is $REQUIREDVERSION"
