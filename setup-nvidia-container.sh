@@ -6,10 +6,14 @@ DOCKERVERSION=$(sudo docker version --format '{{.Client.Version}}')
 echo "Docker Client version is $DOCKERVERSION"
 echo "Required version is $REQUIREDVERSION"
 
-UNDER=$(echo "$REQUIREDVERSION" | awk -F '[.]' '{print $1$2$3}')
-DOCKERVERSION=$(echo "$DOCKERVERSION" | awk -F '[.]' '{print $1$2$3}')
+# https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
+version_comp() {
+    [  "$1" = "`echo -e "$1\n$2" | sort -V | head -n1`" ]
+}
 
-if [ $DOCKERVERSION -ge $UNDER ]; then
+version_comp $REQUIREDVERSION $DOCKERVERSION && MEET_REQUIRTEMENT=true || MEET_REQUIRTEMENT=false
+
+if "${MEET_REQUIRTEMENT}"; then
         echo "Start setup for nvidia-container"
         distribution=$(. /etc/os-release; echo $ID$VERSION_ID) && \
         curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | sudo apt-key add - && \
